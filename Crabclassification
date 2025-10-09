@@ -1,0 +1,43 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.datasets import load_iris
+data = load_iris()
+X = data.data
+y = data.target
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+
+mlp = MLPClassifier(hidden_layer_sizes=(5,), max_iter=1000, random_state=42)
+mlp.fit(X_train, y_train)
+
+
+accuracy = mlp.score(X_test, y_test)
+print(f"Model Accuracy: {accuracy}")
+
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+z_min, z_max = X[:, 2].min() - 1, X[:, 2].max() + 1
+w_min, w_max = X[:, 3].min() - 1, X[:, 3].max() + 1
+
+xx, yy, zz, ww = np.meshgrid(np.arange(x_min, x_max, 0.1),
+                             np.arange(y_min, y_max, 0.1),
+                             np.arange(z_min, z_max, 0.1),
+                             np.arange(w_min, w_max, 0.1))
+
+
+XYZW = np.c_[xx.ravel(), yy.ravel(), zz.ravel(), ww.ravel()]
+Z = mlp.predict(XYZW)
+Z = Z.reshape(xx.shape)
+
+
+plt.figure(figsize=(10, 8))
+plt.contourf(xx[:, :, 0, 0], yy[:, :, 0, 0], Z[:, :, 0, 0], alpha=0.8)
+plt.scatter(X[:, 0], X[:, 1], c=y, edgecolors='k', marker='o')
+plt.xlabel('Sepal length')
+plt.ylabel('Sepal width')
+plt.title('Decision boundary visualization (Sepal)')
+plt.show()
