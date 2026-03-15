@@ -1,0 +1,33 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleNN(nn.Module):
+    """
+    A simple feedforward neural network with one hidden layer.
+    """
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, hidden_size) # First fully connected layer
+        self.relu = nn.ReLU()                        # ReLU activation function
+        self.fc2 = nn.Linear(hidden_size, output_size) # Second fully connected layer
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        return x
+
+# Example usage with dummy data
+input_size = 2    # e.g., two input features
+hidden_size = 8   # e.g., 8 neurons in the hidden layer
+output_size = 1   # e.g., one output (binary classification or regression)
+
+model = SimpleNN(input_size, hidden_size, output_size)
+print(model)
+
+# Create some dummy input data (batch size 1, 2 features)
+dummy_input = torch.randn(1, input_size)
+output = model(dummy_input)
+print(f"\nDummy input shape: {dummy_input.shape}")
+print(f"Output shape: {output.shape}")
